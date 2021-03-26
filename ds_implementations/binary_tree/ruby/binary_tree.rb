@@ -13,7 +13,7 @@ class Node
   end
 
   def vprint
-    print self.value, ", "
+    print value, ', '
   end
 end
 
@@ -44,10 +44,11 @@ class BinaryTree
     self.dfs(node.left) and self.dfs(node.right)
   end
 
-  def shortest_path queue=[@root]
+  def shortest_path
+    queue = [@root]
     depth = 0
     until queue.empty?
-      (2 ** depth).times do
+      (2**depth).times do
         node = queue.shift
 
         next if node.nil?
@@ -55,19 +56,25 @@ class BinaryTree
         # will always return
         return depth + 1 if node.leaf?
 
-         # NOTE: Inititally I wasn't adding nodes if they were nil,
-         #       but then the logic for finding the depth becomes really difficult
-         #       because balanced and unbalanced trees have different depth calculations.
-         #       This method is simpler, in exchange of added space/time complexity.
+        # NOTE: Inititally I wasn't adding nodes if they were nil,
+        #       but then the logic for finding the depth becomes really difficult
+        #       because balanced and unbalanced trees have different depth calculations.
+        #       This method is simpler, in exchange of added space/time complexity.
         queue.push(node.left, node.right)
       end
       depth += 1
     end
   end
+
+  def longest_path(node = @root, depth = 0)
+    return depth if node.nil?
+    return depth + 1 if node.leaf?
+
+    [longest_path(node.right, depth + 1), longest_path(node.left, depth + 1)].max
+  end
 end
 
 class TestCases < Test::Unit::TestCase
-
   def test_complete_bt
     bt = BinaryTree.new Node.new 3
     bt.root.right = Node.new 7
@@ -79,6 +86,7 @@ class TestCases < Test::Unit::TestCase
     bt.root.left.left.left = Node.new 10
 
     assert_equal(bt.shortest_path, 3)
+    assert_equal(bt.longest_path, 4)
   end
 
   def test_incomplete_bt
@@ -93,5 +101,6 @@ class TestCases < Test::Unit::TestCase
 
     puts
     assert_equal(bt.shortest_path, 4)
+    assert_equal(bt.longest_path, 5)
   end
 end
