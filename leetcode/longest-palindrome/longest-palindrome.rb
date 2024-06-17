@@ -37,7 +37,7 @@ def longest_palindrome(words)
   end
 
   # if at least one symmetric non-paired word exists, stick it in the middle
-  middle_word_len = (sym > 0) ? 2 : 0
+  middle_word_len = (sym > 0) ? 2 * sym : 0
 
   (4 * pairs) + middle_word_len
 end
